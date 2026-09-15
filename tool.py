@@ -3,7 +3,6 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 
-
 def get_data(self, state='train', batch_size=1):
   x, y = [],[]
 
@@ -69,14 +68,18 @@ class LearnedPE(nn.Module):
 def forward(self, x, targets=None):
   x      = self.embed(x)                               # 1st
   x      = self.rb1(x)                                 # 2nd
-  x      = x.transpose(0,1) # mha expects [T, B, C]
+  
+  x      = x.transpose(0,1) # mha expects [T, B, C] when batch_first == True
   _,B,_  = x.shape
   mask   = torch.triu(torch.ones(B, B), 1).bool()
   x,_    = self.mha1(x,x,x, attn_mask=mask)            # 3rd
-  x      = x.transpose(0,1)
+  
+  x      = x.transpose(0,1) # transpose back to [B,T,C] as other layers expect
+  
   x      = self.ffn1(x)                                # 4th
   x      = self.rb2(x)                                 # 5th
-  x      = x.transpose(0,1) # mha expects [T, B, C]
+  
+  x      = x.transpose(0,1) # mha expects [T, B, C] when batch_first == True
   _,B,_  = x.shape
   mask   = torch.triu(torch.ones(B, B), 1).bool()
   x,_    = self.mha2(x,x,x, attn_mask=mask)            # 6th
