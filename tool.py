@@ -65,25 +65,18 @@ class LearnedPE(nn.Module):
     out     = self.emb(inn)
     return x + out
 
+# this forward pass logic works when nn.MultiheadAttention - batch_first = True
 def forward(self, x, targets=None):
   x      = self.embed(x)                               # 1st
   x      = self.rb1(x)                                 # 2nd
-  
-  x      = x.transpose(0,1) # mha expects [T, B, C] when batch_first == True
-  _,B,_  = x.shape
-  mask   = torch.triu(torch.ones(B, B), 1).bool()
+  _,T,_  = x.shape
+  mask   = torch.triu(torch.ones(T, T), 1).bool()
   x,_    = self.mha1(x,x,x, attn_mask=mask)            # 3rd
-  
-  x      = x.transpose(0,1) # transpose back to [B,T,C] as other layers expect
-  
   x      = self.ffn1(x)                                # 4th
   x      = self.rb2(x)                                 # 5th
-  
-  x      = x.transpose(0,1) # mha expects [T, B, C] when batch_first == True
-  _,B,_  = x.shape
-  mask   = torch.triu(torch.ones(B, B), 1).bool()
-  x,_    = self.mha2(x,x,x, attn_mask=mask)            # 6th
-  x      = x.transpose(0,1) #back to [B,T,C], as ffn expects 
+  _,T,_  = x.shape
+  mask   = torch.triu(torch.ones(T, T), 1).bool()
+  x,_    = self.mha2(x,x,x, attn_mask=mask)            # 6th 
   x      = self.ffn2(x)                                # 7th
   x      = self.rb3(x)                                 # 8th
   logits = self.lgts(x)                                # 9th
