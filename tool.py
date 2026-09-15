@@ -99,6 +99,9 @@ def forward(self, x, targets=None):
 
 def generate(self, stoi, itos, block_size, use_memory=False):
   self.eval()
+  formats = {'userstart' :'\n<start_of_turn>user\n',
+             'modelstart':'\n<start_of_turn>model\n',
+             'end':'<end_of_turn>'}
   while True:
     text  = ''
     human = input("talk to miniLM: ")
@@ -116,13 +119,13 @@ def generate(self, stoi, itos, block_size, use_memory=False):
     if use_memory:
       human = []
       for m in self.chat:
-        human.append('\n<start_of_turn>user\n' + m['you'].strip()+ '<end_of_turn>')
-        human.append('\n<start_of_turn>model\n'+ m['ai'].strip() + '<end_of_turn>')
+        human.append(formats['userstart' ] + m['you'].strip() + formats['end'])
+        human.append(formats['modelstart'] + m['ai' ].strip() + formats['end'])
       human = ''.join(human)
-      human = human[:-len('<end_of_turn>')]
+      human = human[:-len(formats['end'])]
       human = human if len(human) < block_size else human[len(human)-block_size:]
     else:
-      human = '\n<start_of_turn>user\n' +human.strip()+'<end_of_turn>'+'\n<start_of_turn>model\n'
+      human = formats['userstart'] +human.strip() + formats['end'] + formats['modelstart']
 
     # start sampling from the model...
     inn = torch.tensor(encode(human, stoi)).unsqueeze(0) # [1,T,C]
@@ -131,7 +134,7 @@ def generate(self, stoi, itos, block_size, use_memory=False):
       probs     = F.softmax(logits[-1], dim=0) if logits.ndim > 1 else F.softmax(logits, dim=0)
       ix        = torch.multinomial(probs[-1], num_samples=1).item()
 
-      if "<end_of_turn>" not in text:
+      if formats['end'] not in text:
         lin   = inn.view(-1).tolist(); lin.append(ix)
         if len(lin) > block_size:
           lin = lin[1:]
@@ -145,9 +148,9 @@ def generate(self, stoi, itos, block_size, use_memory=False):
 
 def show_chat(self):
   for m in self.chat:
-    print('You: ', m['you'], "\n")
+    print('You: ',     m['you'],"\n")
     print('    AI : ', m['ai'], "\n")
-  print("#######################")
+  print("##########################")
 
 def fit(self, epochs=1000, batch_size=1, lr=1e-3):
   self.optimizer = optim.AdamW(self.parameters(), lr=lr)
@@ -171,4 +174,4 @@ def fit(self, epochs=1000, batch_size=1, lr=1e-3):
 
     if (i+1) % max(1, int(epochs/20)) == 0:
       print(f"epoch:{i+1}   | loss={loss.item():.4f}   |  val loss={valloss.item():.4f}")
-      torch.save(self.state_dict(), "miniLM.pt")
+      torch.save(self.state_dict(), "miniLM.pt") # save checkpoint during training...
