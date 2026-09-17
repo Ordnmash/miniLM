@@ -95,6 +95,7 @@ def generate(self, stoi, itos, block_size, use_memory=False):
   formats = {'userstart' :'\n<start_of_turn>user\n',
              'modelstart':'\n<start_of_turn>model\n',
              'end':'<end_of_turn>'}
+  self.chat = []
   while True:
     text  = ''
     human = input("talk to miniLM: ")
@@ -106,8 +107,8 @@ def generate(self, stoi, itos, block_size, use_memory=False):
       break
     elif human == 'restart':
       self.chat = []
-      self.show_chat()
       human = input("talk to minLM: ")
+      self.chat += [{'you': human, 'ai':''}]
     
     if use_memory:
       human = []
@@ -166,6 +167,6 @@ def fit(self, epochs=1000, batch_size=1, lr=1e-3):
       self.eval()
       with torch.no_grad():
         _, valloss = self(xv, yv)
-        
+
       print(f"epoch:{i+1}   | loss={loss.item():.4f}   |  val loss={valloss.item():.4f}")
       torch.save(self.state_dict(), "miniLM.pt") # save checkpoint during training...
