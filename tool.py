@@ -65,7 +65,7 @@ class LearnedPE(nn.Module):
     out     = self.emb(inn)
     return x + out
 
-# this forward pass logic works when nn.MultiheadAttention - batch_first = True
+# this forward pass logic works when nn.MultiheadAttention - batch_first = False
 def forward(self, x, targets=None):
   x      = self.embed(x)                               # 1st
   x      = self.rb1(x)                                 # 2nd
@@ -124,8 +124,9 @@ def generate(self, stoi, itos, block_size, use_memory=False):
     inn = torch.tensor(encode(human, stoi)).unsqueeze(0) # [1,T,C]
     while True:
       logits, _ = self(inn)
-      probs     = F.softmax(logits[-1], dim=0) if logits.ndim > 1 else F.softmax(logits, dim=0)
-      ix        = torch.multinomial(probs[-1], num_samples=1).item()
+      ixlogits  = logits[0, -1]
+      probs     = F.softmax(ixlogits, dim=-1)
+      ix        = torch.multinomial(probs, num_samples=1).item()
 
       if formats['end'] not in text:
         lin   = inn.view(-1).tolist(); lin.append(ix)
@@ -160,11 +161,11 @@ def fit(self, epochs=1000, batch_size=1, lr=1e-3):
     # update
     self.optimizer.step()
 
-    # validation
-    self.eval()
-    with torch.no_grad():
-      _, valloss = self(xv, yv)
-
     if (i+1) % max(1, int(epochs/20)) == 0:
+      # validation
+      self.eval()
+      with torch.no_grad():
+        _, valloss = self(xv, yv)
+        
       print(f"epoch:{i+1}   | loss={loss.item():.4f}   |  val loss={valloss.item():.4f}")
       torch.save(self.state_dict(), "miniLM.pt") # save checkpoint during training...
