@@ -30,7 +30,7 @@ def decode(l, itos):
     d.append(itos[li])
   return ''.join(d)
 
-# used to store residual running inputs!!
+# used to store residual running inputs!!, unnecessary in real nnModules
 class capture:
   x = 0
   def __init__(self):
@@ -49,7 +49,6 @@ class ResidualBlock(nn.Module):
 
     out = x + self.cap.x
     self.cap.x = out
-    
     return out
 
 class LearnedPE(nn.Module):
