@@ -67,7 +67,7 @@ class LearnedPE(nn.Module):
 
 # this forward pass logic works when nn.MultiheadAttention batch_first = False
 def forward(self, x, targets=None):
-  x      = self.embed(x) [B,T,C]                       # 1st
+  x      = self.embed(x) #[B,T,C]                      # 1st
   x      = self.rb1(x)                                 # 2nd
   _,T,_  = x.shape
   mask   = torch.triu(torch.ones(T, T), 1).bool()
