@@ -4,8 +4,8 @@ import torch.optim as optim
 import torch.nn.functional as F
 
 def get_data(self, state='train', batch_size=1):
-  x, y = [],[]
-
+  x = []
+  y = []
   encoded_data = self.enctrain if state == 'train' else self.encval
 
   for _ in range(batch_size):
@@ -84,7 +84,7 @@ def forward(self, x, targets=None):
 
   if targets is not None: # cross_entropy expects [B, C, T]
     logits = logits.transpose(1,2)
-    loss   = F.cross_entropy(logits, targets)
+    loss   = F.cross_entropy(logits, targets)#tragets [B,T]
   else:
     loss   = None
 
