@@ -15,7 +15,7 @@ def get_data(self, state='train', batch_size=1):
     x.append(xx)
     y.append(yy)
 
-  return torch.tensor(x, dtype=torch.long), torch.tensor(y, dtype=torch.long)
+  return (torch.tensor(x, dtype=torch.long), torch.tensor(y, dtype=torch.long))
 
 # encoding and decoding tools:
 def encode(s, stoi):
