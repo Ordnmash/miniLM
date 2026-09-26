@@ -18,13 +18,13 @@ def get_data(self, state='train', batch_size=1):
   return (torch.tensor(x, dtype=torch.long), torch.tensor(y, dtype=torch.long))
 
 # encoding and decoding tools:
-def encode(s, stoi):
+def encode(s: str, stoi) -> list:
   d = []
   for si in s:
     d.append(stoi[si])
   return d
 
-def decode(l, itos):
+def decode(l: list, itos) -> str:
   d = []
   for li in l:
     d.append(itos[li])
