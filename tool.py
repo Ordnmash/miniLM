@@ -163,7 +163,7 @@ def fit(self, epochs=1000, batch_size=1, lr=1e-3):
     # update
     self.optimizer.step()
 
-    if (i+1) % max(1, int(epochs/20)) == 0:
+    if (i+1) % max(1, epochs//20) == 0:
       # validation
       self.eval()
       with torch.no_grad():
