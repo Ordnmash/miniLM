@@ -23,12 +23,6 @@ def encode(s: str, stoi) -> list:
     d.append(stoi[si])
   return d
 
-def decode(l: list, itos) -> str:
-  d = []
-  for li in l:
-    d.append(itos[li])
-  return ''.join(d)
-
 # used to store residual running inputs!!
 class capture:
   x = 0
