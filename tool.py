@@ -91,10 +91,6 @@ def forward(self, x, targets=None):
 
 def generate(self, stoi, itos, block_size, use_memory=False):
   self.eval()
-  formats = {'userstart' :'\n<start_of_turn>user\n',
-             'modelstart':'\n<start_of_turn>model\n',
-             'end':'<end_of_turn>'}
-  
   self.chat = []
   while True:
     text  = ''
