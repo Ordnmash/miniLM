@@ -35,17 +35,6 @@ class capture:
   def __init__(self):
     self.x = 0
 
-class ResidualBlock(nn.Module):
-  def __init__(self, cap=capture, just_capture=False):
-    super().__init__()
-    self.cap = cap
-    self.just_capture = just_capture
-
-  def forward(self, x):
-    if self.just_capture:
-      self.cap.x = x
-      return x
-
     out = x + self.cap.x
     self.cap.x = out
     
