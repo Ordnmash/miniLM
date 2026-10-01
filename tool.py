@@ -55,24 +55,23 @@ class LearnedPE(nn.Module):
 
 # this forward pass logic works when nn.MultiheadAttention batch_first = False
 def forward(self, x, targets=None):
-  x      = self.embed(x) #[B,T,C]                      # 1st
-  x      = self.rb1(x)                                 # 2nd
-  _,T,_  = x.shape
+  xem    = self.embed(x)
+  _,T,_  = xem.shape
   mask   = torch.triu(torch.ones(T, T), 1).bool()
-  x,_    = self.mha1(x,x,x, attn_mask=mask)            # 3rd
-  x      = self.ffn1(x)                                # 4th
-  x      = self.rb2(x)                                 # 5th
-  _,T,_  = x.shape
+  x,_    = self.mha1(xem,xem,xem, attn_mask=mask)
+  x      = self.ffn1(x)
+  xrb    = x + xem
+  _,T,_  = xrb.shape
   mask   = torch.triu(torch.ones(T, T), 1).bool()
-  x,_    = self.mha2(x,x,x, attn_mask=mask)            # 6th 
-  x      = self.ffn2(x)                                # 7th
-  x      = self.rb3(x)                                 # 8th
-  logits = self.lgts(x)                                # 9th
-  # logits = [B, T, C]
+  x,_    = self.mha2(xrb,xrb,xrb, attn_mask=mask) 
+  x      = self.ffn2(x)
+  xrb    = x + xrb
+  logits = self.lgts(xrb)
+# logits = [B, T, C]
 
   if targets is not None: # cross_entropy expects [B, C, T]
     logits = logits.transpose(1,2)
-    loss   = F.cross_entropy(logits, targets)#tragets [B,T]
+    loss   = F.cross_entropy(logits, targets)
   else:
     loss   = None
 
