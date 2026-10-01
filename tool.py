@@ -23,6 +23,8 @@ def tknEncoder(s, stoi, itos):
   voc     = list(reversed(stoi.keys()))
   tokens  = []
   def iterate(x):
+    largT = max([sorted(stoi.keys(), key=lambda x: len(x), reverse=True)])
+    if len(x) > len(largT): x = x[:len(largT)] # saves computation time.
     while len(x) > 0:
       if x in voc:
         return stoi[x]
