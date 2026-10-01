@@ -17,6 +17,26 @@ def get_data(self, state='train', batch_size=1):
   return (torch.tensor(x, dtype=torch.long), torch.tensor(y, dtype=torch.long))
 
 # encoding and decoding tools:
+# trained tokenizer encoder style:
+def tknEncoder(s, stoi, itos):
+
+  voc     = list(reversed(stoi.keys()))
+  tokens  = []
+  def iterate(x):
+    while len(x) > 0:
+      if x in voc:
+        return stoi[x]
+      else:
+        x = x[:-1]
+
+  while len(s) > 0:
+    token = iterate(s)
+    tokens.append(token)
+    s = s[len(itos[token]):]
+
+  return tokens 
+
+
 def encode(s: str, stoi) -> list:
   d = []
   for si in s:
