@@ -68,7 +68,7 @@ while len(vocabs) < targetV:
   print(f"{''.join([itos[i] for i in p])}|")
   enc_data = refactor(p)
 
-with open('/home/ordn/Documents/ordn_projects/miniLM/tokenization_properties2.txt', 'w') as f:
+with open('miniLM/tokenization_properties2.txt', 'w') as f:
   f.write(f"{stoi}")
   f.write("\n")
   f.write(f"{itos}")
