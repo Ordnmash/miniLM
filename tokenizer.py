@@ -15,7 +15,7 @@ itos = encdec[1]
 enc_data = [int(x) for x in tokenSet[2:]]
 
 vocabs  = [k for k in stoi.keys()]
-targetV = 500
+targetV = 500 if len(vocabs) < 500 else len(vocabs)+1
 
 
 def updateVoc(token:str):
