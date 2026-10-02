@@ -51,17 +51,6 @@ def decode(l: list, itos) -> str:
     d.append(itos[li])
   return ''.join(d)
 
-# used to store residual running inputs!!
-class capture:
-  x = 0
-  def __init__(self):
-    self.x = 0
-
-    out = x + self.cap.x
-    self.cap.x = out
-    
-    return out
-
 class LearnedPE(nn.Module):
   def __init__(self, max_seq_len:int, n_embed:int):
     super().__init__()
