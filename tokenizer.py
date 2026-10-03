@@ -34,7 +34,7 @@ def refactor(pair: tuple):
   new_data = []
   i        = 0
 
-  while i < len(enc_data) - 1:
+  while i < len(enc_data) - (len(pair) - 1):
     p = tuple([enc_data[i+j] for j in range(len(pair))])
     if p == pair:
       new_data.append(stoi[token])
@@ -44,10 +44,9 @@ def refactor(pair: tuple):
       i += 1
 
   if i < len(enc_data):
-    new_data.append(enc_data[i])
-  print('len of vocabs = ',len(vocabs))
+    new_data.extend(enc_data[i:])
+  print('len of vocabs =',len(vocabs),'\n')
   return new_data
-
 
 def graph():
   build = {}
