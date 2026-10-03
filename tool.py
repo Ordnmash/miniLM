@@ -148,23 +148,31 @@ def show_chat(self):
 def fit(self, epochs=1000, batch_size=1, lr=1e-3):
   self.optimizer = optim.AdamW(self.parameters(), lr=lr)
   for i in range(epochs):
+    t0 = time.perf_counter()
     self.train()
     self.optimizer.zero_grad(set_to_none=True)
 
     x, y   = self.get_data('train', batch_size)
-    xv, yv = self.get_data('val',   batch_size)
-
+    t1 = time.perf_counter()    
     _,loss= self(x, y)
+    tforward = time.perf_counter()
     loss.backward()
-
+    t2 = time.perf_counter()
     # update
     self.optimizer.step()
-
-    if (i+1) % max(1, epochs//20) == 0:
+    t3 = time.perf_counter()
+    if (i+1) % max(1, int(epochs/20)) == 0:
       # validation
       self.eval()
       with torch.no_grad():
+        xv, yv = self.get_data('val',1)
         _, valloss = self(xv, yv)
 
-      print(f"epoch:{i+1}   | loss={loss.item():.4f}   |  val loss={valloss.item():.4f}")
+      print(f"epoch:{i+1}   | train loss={loss.item():.4f}   |  val loss={valloss.item():.4f}")
+      print(
+        f"  trn constrctn: {t1-t0:.2f}s | "
+        f"frwrd: {tforward-t1:.2f}s | "
+        f"bckwrd: {t2-tforward:.2f}s | "
+        f"updt: {t3-t2:.2f}s"
+      )
       torch.save(self.state_dict(), "miniLM.pt") # save checkpoint during training...
