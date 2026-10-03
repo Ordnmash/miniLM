@@ -90,60 +90,71 @@ def forward(self, x, targets=None):
 
 def generate(self, stoi, itos, block_size, use_memory=False):
   self.eval()
-  formats = {'userstart' :'\n<start_of_turn>user\n',
-           'modelstart':'\n<start_of_turn>model\n',
-           'end':'<end_of_turn>'}
-  self.chat = []
+  self.modelTkns    = ''
+  self.lenmodelTkns = 0
+  self.lenUserTkns  = 0
   while True:
     text  = ''
+    formats = {'humanStart':"<start_of_turn>user\n", 
+               'end':"<end_of_turn>\n", 
+               'aiStart':"<start_of_turn>model\n"}
+    
     human = input("talk to miniLM: ")
-    self.chat += [{'you': human, 'ai':''}]
+    self.chat += [{'you': human, 'ai':""}]
 
     if human == 'end':
-      self.show_chat()
       self.chat = []
       break
+
     elif human == 'restart':
       self.chat = []
       human = input("talk to minLM: ")
       self.chat += [{'you': human, 'ai':''}]
-    
+
     if use_memory:
-      human = []
-      for m in self.chat:
-        human.append(formats['userstart' ] + m['you'].strip() + formats['end'])
-        human.append(formats['modelstart'] + m['ai' ].strip() + formats['end'])
-      human = ''.join(human)
-      human = human[:-len(formats['end'])]
-      human = human if len(human) < block_size else human[len(human)-block_size:]
+      past = ''
+      for m in self.chat[:-1]:
+        past += formats['humanStart'] + m['you'] + formats['end'] + formats['aiStart'] + m['ai'] + formats['end']
+      human = past + formats['humanStart'] + human + formats['end'] + formats['aiStart']
     else:
-      human = formats['userstart'] +human.strip() + formats['end'] + formats['modelstart']
+      human = formats['humanStart'] + human + formats['end'] + formats['aiStart']
 
     # start sampling from the model...
-    inn = torch.tensor(encode(human, stoi)).unsqueeze(0) # [1,T,C]
+    inn = torch.tensor(tknEncoder(human, stoi, itos)).unsqueeze(0) # [1,T]
+    self.lenUserTkns += inn.shape[1]
     while True:
       logits, _ = self(inn)
       ixlogits  = logits[0, -1]
       probs     = F.softmax(ixlogits, dim=-1)
       ix        = torch.multinomial(probs, num_samples=1).item()
 
-      if formats['end'] not in text:
+      if "<end_of_turn>" not in text:
         lin   = inn.view(-1).tolist(); lin.append(ix)
         if len(lin) > block_size:
           lin = lin[1:]
         inn   = torch.tensor(lin).unsqueeze(0) # [1,T,C]
         text += itos[ix]
+        self.modelTkns += (itos[ix] + '|')
+        self.lenmodelTkns += 1
       else:
-        text  = text.replace("<end_of_turn>", "")
+        ntext = ''
+        # we want to split the text with <end_of_turn> and only keep the first part of the text, which is the model's response to the user input.
+        for t in text.split("<end_of_turn>"):
+          if t != '':
+            ntext += t
+            break
+          break
+        text = ntext
         break
-    self.chat[-1]['ai'] = text
+        
+    self.chat[-1]['ai'] = f"{text}"
     self.show_chat()
 
 def show_chat(self):
   for m in self.chat:
     print('You: ',     m['you'],"\n")
     print('    AI : ', m['ai'], "\n")
-  print("##########################")
+  print("=============================================\n")
 
 def fit(self, epochs=1000, batch_size=1, lr=1e-3):
   self.optimizer = optim.AdamW(self.parameters(), lr=lr)
