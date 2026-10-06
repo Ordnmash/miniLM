@@ -150,7 +150,7 @@ def generate(self, stoi, itos, block_size, use_memory=False):
 def show_chat(self):
   for m in self.chat:
     print('You: ',     m['you'],"\n")
-    print('    AI : ', m['ai'], "\n")
+    print(' AI friend: ', m['ai'], "\n")
   print("=============================================\n")
 
 def fit(self, epochs=1000, batch_size=1, lr=1e-3):
