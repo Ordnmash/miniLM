@@ -1,21 +1,19 @@
 from tool import encode
 
-file = "miniLM/tokenization_properties.txt"
-tokenSet = open(file, "r").read().splitlines()
+print("running the tokenizer...")
+
+file = "miniLM/converted_chat_formatted.txt"
+data = open(file, "r").read()
 #print(tokenSet)
+vocabs = list(sorted(set(data)))
 
-import ast
-encdec = []
-for line in tokenSet[:2]:
-  #print("converting line to dict: ")
-  encdec.append(ast.literal_eval(line))
+stoi = {s:i for i,s in enumerate(vocabs)}
+itos = {i:s for i,s in enumerate(vocabs)}
 
-stoi = encdec[0]
-itos = encdec[1]
-enc_data = [int(x) for x in tokenSet[2:]]
+enc_data = encode(data, stoi)
 
 vocabs  = [k for k in stoi.keys()]
-targetV = 500 if len(vocabs) < 500 else len(vocabs)+1
+targetV = 768
 
 
 def updateVoc(token:str):
@@ -60,14 +58,19 @@ def graph():
 
   return build
 
-#print(f"len of vocabs = {len(vocabs)}, targetV = {targetV}")
+special_tokens = ['<start_of_turn>user\n','<start_of_turn>model\n','<end_of_turn>\n']
+for token in special_tokens:
+  intkn = tuple([stoi[x] for x in token])
+  enc_data = refactor(intkn)
+
 while len(vocabs) < targetV:
   jsn = graph()
-  p   = sorted(jsn, key=lambda x: jsn[x])[-1]
-  print(f"{''.join([itos[i] for i in p])}|")
+  jsor= sorted(jsn, key=lambda x: jsn[x])
+  p   = jsor[-1]
+  print(f"merging {p} |{''.join([itos[i] for i in p])}| frequency {jsn[p]}\n")
   enc_data = refactor(p)
 
-with open('miniLM/tokenization_properties2.txt', 'w') as f:
+with open('/home/ordn/Documents/ordn_projects/miniLM/chat_learnedData.txt', 'w') as f:
   f.write(f"{stoi}")
   f.write("\n")
   f.write(f"{itos}")
