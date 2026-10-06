@@ -59,8 +59,7 @@ class LearnedPE(nn.Module):
   def forward(self,x):
     # x = [B, T, C]
     _,T,_   = x.shape
-    seq_len = T
-    inn     = torch.arange(0, seq_len)
+    inn     = torch.arange(0, T) # [T]d=1, 
     out     = self.emb(inn)
     return x + out
 
