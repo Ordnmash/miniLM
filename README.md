@@ -12,6 +12,50 @@ a mini generative language model, built from scratch.
 </p>
 
 ---
-### this model was trained directly in one stage of training which was pretraining with dataset like finetunning dataset.
-as the dataset was conversations, exactly after training, the model could keep up in live conversation, yet with broken
-words formatting and gramma errors!
+### real-Chat sample from the model:
+You:  Can we talk for a minute? 
+
+    AI_friend:  That is whether we had a problem here. Is there something wrong with my son. 
+
+You:  I don't know about that, is your son okay? 
+
+    AI_friend:  I think I might be not bit. 
+
+You:  Where is he? 
+
+    AI_friend:  Go straight up to you? 
+
+You:  Just tell me where he is, so I could check on him. 
+
+    AI_friend:  By the way! 
+
+You:  I hope everything is alright! 
+
+    AI_friend:  Where is to do? 
+
+You:  I don't know, you tell me. 
+
+    AI_friend:  No problem, I liked about? 
+
+You:  What do you like? 
+
+    AI_friend:  It's very fond of you, but it is great food of card too romantic you understand on your dom tooth. It means great. 
+
+You:  Okay, thank you for telling me that! 
+
+    AI_friend:  What about my nose ask you some question. 
+
+You:  Okay, go on ask me. 
+
+    AI_friend:  Yes. You're really rating. 
+
+You:  sure, Thank you! 
+
+    AI_friend:  Yes, I am thinking about? How did you wait. Do you have a Trauff and they're coming. 
+
+You:  I don't have that! 
+
+    AI_friend:  Thank you. 
+
+input tkns: 258 | model tkns: 3, indicates for history of chat and last model response.
+=============================================
