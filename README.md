@@ -1,5 +1,5 @@
 # miniLM 8M
-a mini generative language model, built from scratch.
+a mini generative language model that (talks back), built from scratch.
 ---
 ## architecture: Decoder Transformer
 * total number of layers `6`
