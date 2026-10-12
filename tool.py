@@ -11,7 +11,8 @@ def get_data(self, state='train', batch_size=1):
     inx    = torch.randint(0, (len(encoded_data)-(self.block_size+1)), (1,)).item()
     xx     = encoded_data[inx:inx+self.block_size]
     yy     = encoded_data[inx+1:(inx+self.block_size)+1]
-    x.append(xx); y.append(yy)
+    x.append(xx)
+    y.append(yy)
 
   return (torch.tensor(x, dtype=torch.long), torch.tensor(y, dtype=torch.long))
 
