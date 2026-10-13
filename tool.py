@@ -119,7 +119,7 @@ def generate(self, stoi, itos, block_size, use_memory=False):
     inn = torch.tensor(tknEncoder(human, stoi, itos)).unsqueeze(0) # [1,T]
     self.lenUserTkns += inn.shape[1]
     while True:
-      logits, _ = self(inn)
+      logits, _ = self(inn) # forward pass
       ixlogits  = logits[0, -1]
       probs     = F.softmax(ixlogits, dim=-1)
       ix        = torch.multinomial(probs, num_samples=1).item()
