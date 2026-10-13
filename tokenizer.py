@@ -25,7 +25,7 @@ def updateVoc(token:str):
   stoi[token] = i
   itos[i]     = token
 
-def refactor(pair: tuple):
+def refactor(pair: tuple[int]) -> list:
   
   token = ''.join(itos[i] for i in pair)
   updateVoc(token)
@@ -46,7 +46,7 @@ def refactor(pair: tuple):
   print('len of vocabs =',len(vocabs),'\n')
   return new_data
 
-def graph():
+def graph() -> dict:
   build = {}
   for i,e in enumerate(enc_data):
     if i < len(enc_data) -1:
