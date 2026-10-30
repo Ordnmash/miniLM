@@ -70,7 +70,7 @@ while len(vocabs) < targetV:
   print(f"merging {p} |{''.join([itos[i] for i in p])}| frequency {jsn[p]}\n")
   enc_data = refactor(p)
 
-with open('/home/ordn/Documents/ordn_projects/miniLM/chat_learnedData.txt', 'w') as f:
+with open('file.txt', 'w') as f:
   f.write(f"{stoi}")
   f.write("\n")
   f.write(f"{itos}")
