@@ -58,7 +58,10 @@ def graph() -> dict:
 
   return build
 
-special_tokens = ['<start_of_turn>user\n','<start_of_turn>model\n','<end_of_turn>\n']
+special_tokens = ['<start_of_turn>user\n',
+                  '<start_of_turn>model\n',
+                  '<end_of_turn>\n'] # corresponding to the dataset.
+
 for token in special_tokens:
   intkn = tuple([stoi[x] for x in token])
   enc_data = refactor(intkn)
