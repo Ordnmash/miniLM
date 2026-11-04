@@ -18,7 +18,7 @@ def get_data(self, state='train', batch_size=1):
 
 # encoding and decoding tools:
 # trained tokenizer encoder style:
-def tknEncoder(s, stoi, itos):
+def tknEncoder(s:str, stoi, itos):
 
   voc     = list(reversed(stoi.keys()))
   tokens  = []
