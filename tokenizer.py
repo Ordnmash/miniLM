@@ -1,7 +1,5 @@
 from tool import encode
 
-print("running the tokenizer...")
-
 file = "miniLM/converted_chat_formatted.txt"
 data = open(file, "r").read()
 #print(tokenSet)
