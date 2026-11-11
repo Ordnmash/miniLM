@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 
-def get_data(self, state='train', batch_size=1):
+def get_data(self, state='train', batch_size=1): 
   x = []
   y = []
   encoded_data = self.enctrain if state == 'train' else self.encval
