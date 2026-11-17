@@ -1,6 +1,7 @@
 # miniLM 8M
 a mini generative language model (that talks back), built from scratch.
 ---
+talk to miniLM -> https://ordn.online/chat
 ## architecture: Decoder Transformer
 * total number of layers `6`
 * multiheadAttention blocks `1`
